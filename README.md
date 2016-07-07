@@ -27,6 +27,8 @@ It will check for valid URLs.
 13. https://scicrunch.org/
 14. http://identifiers.org/rrid/
 
+* please feel free to suggest additional repos in issues!
+
 ## Notes
 
 In its current manifestation, it will pull a maximum of 100,000 abstracts
