@@ -32,3 +32,18 @@ It will check for valid URLs.
 ## Notes
 
 In its current manifestation, it will pull a maximum of 100,000 abstracts
+
+
+## Setup
+```
+pip install -r requirements.txt
+```
+
+## Usage
+```
+python find_code_urls.py <OUTPUT_CSV_FILENAME> <YOUR_EMAIL>
+```
+Writes a tsv file with columns: pmid, article title, url
+
+
+

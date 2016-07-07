@@ -1,3 +1,8 @@
+"""
+Finds urls in pubmed articles and writes them out to a tsv file.
+Checks for articles containing DOMAIN_PARTS below and verifies that it is a valid url.
+"""
+
 from __future__ import print_function
 from Bio import Entrez
 import nltk
@@ -5,6 +10,7 @@ import requests
 from requests.exceptions import ConnectionError
 import sys
 
+# parts of the url that we should search for
 DOMAIN_PARTS = [
     "github",
     "bitbucket",
@@ -22,14 +28,23 @@ DOMAIN_PARTS = [
     "identifiers.org",
 ]
 DATABASE = "pubmed"
+
 # maximum records that can be returned
 # expected to find much less than this...
 NCBI_RETMAX = 100000
+NCBI_RETMAX = 100
+
 # How often to print out progress
 PROG_CNT = 10
 
 
 def is_source_code_url(domain_parts, token):
+    """
+    Does the token contain one of our domain parts and resolves to a url.
+    :param domain_parts: [str] domain part of url
+    :param token: str possible code url token
+    :return: Boolean: true if token is a source code url
+    """
     for part in domain_parts:
         if part in token:
             if token != part:
@@ -38,6 +53,10 @@ def is_source_code_url(domain_parts, token):
 
 
 def is_url_valid(url):
+    """
+    Is the specified URL valid? Fetches it to see if it works.
+    :param url: str: url to check
+    """
     try:
         r = requests.get(format_url(url))
         result = r.ok
@@ -50,6 +69,11 @@ def is_url_valid(url):
 
 
 def format_url(url):
+    """
+    Add http:// or similar if necessary.
+    :param url: url to format
+    :return: formatted url
+    """
     if not url.startswith("http"):
         if url.startswith("//"):
             return "http:" + url
@@ -59,6 +83,11 @@ def format_url(url):
 
 
 def search_for_articles(domain_parts):
+    """
+    Search for articles containing domain_parts in pubmed.
+    :param domain_parts: [str] list of terms to search for
+    :return: int, list[ID]
+    """
     search_terms = " or ".join(domain_parts)
     print("Running esearch.")
     handle = Entrez.esearch(db=DATABASE, retmax=NCBI_RETMAX, term=search_terms)
@@ -69,7 +98,12 @@ def search_for_articles(domain_parts):
     return count, record['IdList']
 
 
-def parse_abstract_data(record):
+def parse_article_data(record):
+    """
+    Pull out fields from NCBI article
+    :param record:
+    :return: pmid, title, abstract from the record
+    """
     pmid = str(record['MedlineCitation']['PMID'])
     article = record['MedlineCitation']['Article']
     title = article['ArticleTitle'].encode('latin-1', 'replace')
@@ -80,33 +114,66 @@ def parse_abstract_data(record):
     return pmid, title, abstract
 
 
-def find_urls_for_domain_parts(outfilename, domain_parts, email):
-    Entrez.email = email
+def find_urls_in_abstract(domain_parts, abstract, pmid):
+    """
+    Find urls in the specified abstract by looking for domain parts.
+    :param domain_parts: [str] list of terms to search for
+    :param abstract: str text to search
+    :param pmid: str id of the abstract
+    :return: [str] urls we found
+    """
+    try:
+        tokens = nltk.word_tokenize(abstract)
+        urls_in_abstract = [format_url(token) for token in tokens if is_source_code_url(domain_parts, token)]
+        return urls_in_abstract
+    except UnicodeDecodeError as err:
+        print("Failed to parse abstract for {}: {}".format(pmid, err))
+        return []
+
+
+def efetch_articles(article_id_list):
+    """
+    Fetch articles for a list of pmids
+    :param article_id_list: [str] article pmids to fetch
+    :return: handle to results
+    """
+    ids = ",".join(article_id_list)
+    return Entrez.efetch(db=DATABASE, id=ids, retmode="xml")
+
+
+def show_progress_message(cnt, num_found_articles):
+    if cnt % PROG_CNT == 0:
+        sys.stdout.write('\rProcessed {} of {}'.format(cnt, num_found_articles))
+
+
+def find_urls_for_domain_parts(outfilename, domain_parts):
+    """
+    Write pmid, title, url records to outfilename for each article that contains domain_parts.
+    :param outfilename: str: filename to write tsv into
+    :param domain_parts: [str] list of terms to search for
+    """
     num_found_articles, article_id_list = search_for_articles(domain_parts)
     cnt = 0
-    ids = ",".join(article_id_list)
-    num_urls = 0
+    found_urls = 0
     with open(outfilename, 'w') as outfile:
-        handle = Entrez.efetch(db=DATABASE, id=ids, retmode="xml")
+        handle = efetch_articles(article_id_list)
         records = Entrez.parse(handle)
         for record in records:
-            pmid, title, abstract = parse_abstract_data(record)
+            pmid, title, abstract = parse_article_data(record)
             if abstract:
-                try:
-                    tokens = nltk.word_tokenize(abstract)
-                    urls_in_abstract = [format_url(token) for token in tokens if is_source_code_url(domain_parts, token)]
-                    for url in urls_in_abstract:
-                        num_urls += 1
-                        outfile.write("{}\t{}\t{}\n".format(pmid, title, url))
-                except UnicodeDecodeError as err:
-                    print("Failed to parse abstract for {}: {}".format(pmid, err))
+                urls_in_abstract = find_urls_in_abstract(domain_parts, abstract, pmid)
+                for url in urls_in_abstract:
+                    outfile.write("{}\t{}\t{}\n".format(pmid, title, url))
+                    found_urls += 1
             cnt += 1
-            if cnt % PROG_CNT == 0:
-                sys.stdout.write('\rProcessed {} of {}'.format(cnt, num_found_articles))
+            show_progress_message(cnt, num_found_articles)
         handle.close()
-    print("Urls in Articles=", num_urls)
 
-if len(sys.argv) != 3:
-    print("Usage: python find_code_urls.py <OUTPUT_FILENAME> <YOUR_EMAIL>")
-else:
-    find_urls_for_domain_parts(sys.argv[1], DOMAIN_PARTS, sys.argv[2])
+    print("\nFound {} urls.".format(found_urls))
+
+if __name__ == "__main__":
+    if len(sys.argv) != 3:
+        print("Usage: python find_code_urls.py <OUTPUT_FILENAME> <YOUR_EMAIL>")
+    else:
+        Entrez.email = sys.argv[2]
+        find_urls_for_domain_parts(sys.argv[1], DOMAIN_PARTS)
