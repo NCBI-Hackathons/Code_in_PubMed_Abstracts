@@ -38,6 +38,17 @@ In its current manifestation, it will pull a maximum of 100,000 abstracts
 ```
 pip install -r requirements.txt
 ```
+Download nltk required files:
+```
+python
+import nltk
+nltk.download()
+```
+Use GUI to download Models, Punkt data file.
+```
+exit
+```
+
 
 ## Usage
 ```
