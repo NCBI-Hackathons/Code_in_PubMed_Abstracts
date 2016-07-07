@@ -12,20 +12,20 @@ It will check for valid URLs.
 
 ## Current list of repositories
 
-github
-bitbucket
-dataverse
-figshare
-bioconda
-omictools.com
-sourceforge.net
-bioinformatics.org
-bioinformatics.ca
-http://iubio.bio.indiana.edu/software/
-https://bioweb.pasteur.fr/welcome
-https://bio.tools/
-https://scicrunch.org/
-http://identifiers.org/rrid/
+1. github
+2. bitbucket
+3. dataverse
+4. figshare
+5. bioconda
+6. omictools.com
+7. sourceforge.net
+8. bioinformatics.org
+9. bioinformatics.ca
+10. http://iubio.bio.indiana.edu/software/
+11. https://bioweb.pasteur.fr/welcome
+12. https://bio.tools/
+13. https://scicrunch.org/
+14. http://identifiers.org/rrid/
 
 ## Notes
 
