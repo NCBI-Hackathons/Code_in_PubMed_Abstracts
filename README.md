@@ -17,8 +17,8 @@ It will check for valid URLs.
 3. dataverse
 4. figshare
 5. bioconda
-6. omictools.com
-7. sourceforge.net
+6. omictools
+7. sourceforge
 8. bioinformatics.org
 9. bioinformatics.ca
 10. iubio.bio.indiana.edu
@@ -43,7 +43,8 @@ pip install -r requirements.txt
 ```
 python find_code_urls.py <OUTPUT_CSV_FILENAME> <YOUR_EMAIL>
 ```
-Writes a tsv file with columns: pmid, article title, url
+Writes a tsv file containing a record per url we were able to find in pubmed articles.
+Columns: pmid, article title, url
 
 
 
