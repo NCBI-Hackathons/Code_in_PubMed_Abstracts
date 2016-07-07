@@ -10,6 +10,7 @@ import requests
 from requests.exceptions import ConnectionError
 import sys
 import string
+import re
 
 # parts of the url that we should search for
 DOMAIN_PARTS = [
@@ -18,14 +19,14 @@ DOMAIN_PARTS = [
     "dataverse",
     "figshare",
     "bioconda",
-    "omictools.com",
-    "sourceforge.net",
+    "omictools",
+    "sourceforge",
     "bioinformatics.org",
     "bioinformatics.ca",
     "iubio.bio.indiana.edu",
     "bioweb.pasteur.fr",
     "vbio.tools",
-    "scicrunch.org",
+    "scicrunch",
     "identifiers.org",
 ]
 DATABASE = "pubmed"
@@ -74,6 +75,7 @@ def format_url(url):
     :param url: url to format
     :return: formatted url
     """
+    url = url.rstrip("/")
     if not url.startswith("http"):
         if url.startswith("//"):
             return "http:" + url

@@ -1,2 +1,3 @@
 biopython==1.66
 nltk==3.2.1
+requests==2.10.0
