@@ -9,6 +9,7 @@ import nltk
 import requests
 from requests.exceptions import ConnectionError
 import sys
+import string
 
 # parts of the url that we should search for
 DOMAIN_PARTS = [
@@ -31,7 +32,7 @@ DATABASE = "pubmed"
 
 # maximum records that can be returned
 # expected to find much less than this...
-NCBI_RETMAX = 100000
+NCBI_RETMAX = 100
 
 
 # How often to print out progress
@@ -98,6 +99,15 @@ def search_for_articles(domain_parts):
     return count, record['IdList']
 
 
+def clean_str(value):
+    """
+    Remove any non printable characters from the value.
+    :param value: str value to be cleaned
+    :return: str cleaned up value
+    """
+    return ''.join([c for c in value if c in string.printable])
+
+
 def parse_article_data(record):
     """
     Pull out fields from NCBI article
@@ -106,11 +116,10 @@ def parse_article_data(record):
     """
     pmid = str(record['MedlineCitation']['PMID'])
     article = record['MedlineCitation']['Article']
-    title = article['ArticleTitle'].encode('latin-1', 'replace')
+    title = clean_str(article['ArticleTitle'])
     abstract = None
     if article.get('Abstract'):
-        so = article['Abstract']['AbstractText'][0]
-        abstract = so.encode('latin-1', 'replace')
+        abstract = clean_str(article['Abstract']['AbstractText'][0])
     return pmid, title, abstract
 
 
