@@ -21,11 +21,11 @@ It will check for valid URLs.
 7. sourceforge.net
 8. bioinformatics.org
 9. bioinformatics.ca
-10. http://iubio.bio.indiana.edu/software/
-11. https://bioweb.pasteur.fr/welcome
-12. https://bio.tools/
-13. https://scicrunch.org/
-14. http://identifiers.org/rrid/
+10. iubio.bio.indiana.edu
+11. bioweb.pasteur.fr
+12. bio.tools
+13. scicrunch.org
+14. identifiers.org
 
 * please feel free to suggest additional repos in issues!
 
