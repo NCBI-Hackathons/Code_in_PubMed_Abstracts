@@ -32,7 +32,7 @@ DATABASE = "pubmed"
 
 # maximum records that can be returned
 # expected to find much less than this...
-NCBI_RETMAX = 100
+NCBI_RETMAX = 10000
 
 
 # How often to print out progress
