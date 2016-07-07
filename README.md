@@ -43,7 +43,8 @@ pip install -r requirements.txt
 ```
 python find_code_urls.py <OUTPUT_CSV_FILENAME> <YOUR_EMAIL>
 ```
-Writes a tsv file with columns: pmid, article title, url
+Writes a tsv file containing a record per url we were able to find in pubmed articles.
+Columns: pmid, article title, url
 
 
 
