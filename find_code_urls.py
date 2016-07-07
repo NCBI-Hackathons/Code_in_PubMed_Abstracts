@@ -34,7 +34,6 @@ DATABASE = "pubmed"
 # expected to find much less than this...
 NCBI_RETMAX = 10000
 
-
 # How often to print out progress
 PROG_CNT = 10
 
