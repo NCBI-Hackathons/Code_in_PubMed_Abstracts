@@ -17,8 +17,8 @@ It will check for valid URLs.
 3. dataverse
 4. figshare
 5. bioconda
-6. omictools.com
-7. sourceforge.net
+6. omictools
+7. sourceforge
 8. bioinformatics.org
 9. bioinformatics.ca
 10. iubio.bio.indiana.edu
