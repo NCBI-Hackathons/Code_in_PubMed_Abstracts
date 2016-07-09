@@ -49,23 +49,24 @@ def is_source_code_url(domain_parts, token):
     for part in domain_parts:
         if part in token:
             if token != part:
-                return is_url_valid(token)
+                return is_url_valid(token, pmid)
     return False
 
 
-def is_url_valid(url):
+def is_url_valid(url, pmid=None):
     """
     Is the specified URL valid? Fetches it to see if it works.
     :param url: str: url to check
     """
     try:
-        r = requests.get(format_url(url))
+        cleanurl = format_url(url)
+        r = requests.get(cleanurl)
         result = r.ok
         if not result:
-            print("Unable to connect to URL: {} result {}".format(url, r.status_code))
+            print("PMID: {}. Unable to connect to URL: {} result {}".format(pmid, url, r.status_code), file=sys.stderr)
         return result
     except ConnectionError as err:
-        print("Unable to connect to URL: {}".format(url))
+        print("PMID: {}. Unable to connect to URL: {}".format(pmid, url), file=sys.stderr)
         return False
 
 
@@ -137,7 +138,7 @@ def find_urls_in_abstract(domain_parts, abstract, pmid):
         urls_in_abstract = [format_url(token) for token in tokens if is_source_code_url(domain_parts, token)]
         return urls_in_abstract
     except UnicodeDecodeError as err:
-        print("Failed to parse abstract for {}: {}".format(pmid, err))
+        print("Failed to parse abstract for {}: {}".format(pmid, err), file=sys.stderr)
         return []
 
 
@@ -153,7 +154,7 @@ def efetch_articles(article_id_list):
 
 def show_progress_message(cnt, num_found_articles):
     if cnt % PROG_CNT == 0:
-        sys.stdout.write('\rProcessed {} of {}'.format(cnt, num_found_articles))
+        print('Processed {} of {}'.format(cnt, num_found_articles))
 
 
 def find_urls_for_domain_parts(outfilename, domain_parts):
