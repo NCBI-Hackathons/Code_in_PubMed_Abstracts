@@ -63,10 +63,10 @@ def is_url_valid(url, pmid=None):
         r = requests.get(cleanurl)
         result = r.ok
         if not result:
-            print("PMID: {}. Unable to connect to URL: {} result {}".format(pmid, url, r.status_code), file=sys.stderr)
+            print("PMID: {}. Unable to connect to URL: {} result {}".format(pmid, cleanurl, r.status_code), file=sys.stderr)
         return result
     except ConnectionError as err:
-        print("PMID: {}. Unable to connect to URL: {}".format(pmid, url), file=sys.stderr)
+        print("PMID: {}. Unable to connect to URL: {}".format(pmid, cleanurl), file=sys.stderr)
         return False
 
 
