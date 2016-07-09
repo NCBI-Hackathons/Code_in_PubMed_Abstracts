@@ -60,7 +60,7 @@ Download nltk required files:
 $ python -c 'import nltk ; nltk.download()'
 ```
 
-Download Models, Punkt data files. By default this will end up in `$HOME/nltk_data`.
+Download `punkt` data files. By default this will end up in `$HOME/nltk_data`.
 
 ## Usage
 ```
