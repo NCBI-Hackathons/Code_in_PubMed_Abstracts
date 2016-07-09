@@ -39,7 +39,7 @@ NCBI_RETMAX = 10000
 PROG_CNT = 10
 
 
-def is_source_code_url(domain_parts, token):
+def is_source_code_url(domain_parts, token, pmid):
     """
     Does the token contain one of our domain parts and resolves to a url.
     :param domain_parts: [str] domain part of url
@@ -135,7 +135,7 @@ def find_urls_in_abstract(domain_parts, abstract, pmid):
     """
     try:
         tokens = nltk.word_tokenize(abstract)
-        urls_in_abstract = [format_url(token) for token in tokens if is_source_code_url(domain_parts, token)]
+        urls_in_abstract = [format_url(token) for token in tokens if is_source_code_url(domain_parts, token, pmid)]
         return urls_in_abstract
     except UnicodeDecodeError as err:
         print("Failed to parse abstract for {}: {}".format(pmid, err), file=sys.stderr)
