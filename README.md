@@ -54,13 +54,13 @@ On CentOS:
 $ yum install -y python-devel
 ```
 
-Download nltk required files:
+Download nltk required files, 'punkt':
 
 ```
-$ python -c 'import nltk ; nltk.download()'
+$ python -m nltk.downloader punkt
 ```
 
-Download `punkt` data files. By default this will end up in `$HOME/nltk_data`.
+By default this will end up in `$HOME/nltk_data`.
 
 ## Usage
 ```
@@ -68,4 +68,3 @@ python find_code_urls.py <OUTPUT_CSV_FILENAME> <YOUR_EMAIL>
 ```
 Writes a tsv file containing a record per url we were able to find in pubmed articles.
 Columns: pmid, article title, url
-
